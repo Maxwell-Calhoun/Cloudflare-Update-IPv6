@@ -34,16 +34,16 @@ foreach ($record in $dns_records) {
         Write-Host "🔁 Updating Cloudflare record..."
         $body = @{
             type    = "AAAA"
-            name    = $dnsName
+            name    = $record
             content = $ipv6
             ttl     = 60
             proxied = $false
         } | ConvertTo-Json -Depth 2
 
         Invoke-RestMethod -Uri $dns_recordUrl -Headers $headers -Method PUT -Body $body
-        Write-Host "✅ Updated AAAA to $ipv6"
+        Write-Host "Updated AAAA to $ipv6"
     } else {
-        Write-Host "✔️ No change needed"
+        Write-Host "No change needed"
     }
 
 }
