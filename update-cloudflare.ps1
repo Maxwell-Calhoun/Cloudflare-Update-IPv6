@@ -20,7 +20,7 @@ if (-not $ipv6) {
 # get current record
 $headers = @{ Authorization = "Bearer $apiToken"; "Content-Type" = "application/json" }
 
-foreach ($record in $dns_records) {
+foreach ($record in $dns_Records) {
     $response = Invoke-RestMethod -Uri "https://api.cloudflare.com/client/v4/zones/$zoneId/dns_records?type=AAAA&name=$record" `
     -Headers @{ Authorization = "Bearer $apiToken" } `
     -ContentType "application/json" `
@@ -31,7 +31,7 @@ foreach ($record in $dns_records) {
     $current = Invoke-RestMethod -Uri $dns_recordUrl -Headers $headers -Method GET
 
     if ($current.result.content -ne $ipv6) {
-        Write-Host "🔁 Updating Cloudflare record..."
+        Write-Output "Updating Cloudflare $record..."
         $body = @{
             type    = "AAAA"
             name    = $record
@@ -41,10 +41,8 @@ foreach ($record in $dns_records) {
         } | ConvertTo-Json -Depth 2
 
         Invoke-RestMethod -Uri $dns_recordUrl -Headers $headers -Method PUT -Body $body
-        Write-Host "Updated AAAA to $ipv6"
+        Write-Output "Updated AAAA to $ipv6"
     } else {
-        Write-Host "No change needed"
+        Write-Output "No change needed for $record"
     }
-
 }
-
